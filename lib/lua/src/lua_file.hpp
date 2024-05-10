@@ -16,7 +16,7 @@
 #include "lua_json.hpp"
 
 
-/*class LuaHttpClient
+class LuaHttpClient
 {
     public:
     LuaHttpClient(LuaFile* lua);
@@ -38,7 +38,7 @@ class LuaNetwork
 
     private:
     LuaFile* lua;
-};*/
+};
 
 struct Permissions
 {

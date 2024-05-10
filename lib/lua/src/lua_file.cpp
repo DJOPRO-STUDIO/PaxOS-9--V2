@@ -9,7 +9,7 @@
 #include <app.hpp>
 
 
-/*
+
 LuaHttpClient::LuaHttpClient(LuaFile* lua)
     : httpClient()
 {
@@ -24,13 +24,29 @@ LuaHttpClient::~LuaHttpClient()
 std::string LuaHttpClient::get(std::string url)
 {
     // ajouter la verrification de l'url
-    return httpClient.get(url);
+    #if !defined(ESP32)
+    network::URLSessionDataTask* getTask = network::URLSession::defaultInstance.get()->dataTaskWithURL(network::URL(url), [](const std::string& data)
+    {
+        {
+            return data;
+        }
+
+    });
+    getTask->resume();
+    #endif
 }
 
 std::string LuaHttpClient::post(std::string url)
 {
-    // ajouter la verrification de l'url
-    return httpClient.get(url); // a changer quand il y aura le post :/
+    network::URLRequest post_request = network::URLRequest(network::URL(url));
+    post_request.method = network::URLRequest::HTTPMethod::POST;
+    network::URLSessionDataTask* postTask = network::URLSession::defaultInstance.get()->dataTaskWithRequest(post_request, [&](const std::string& data)
+    {
+        {
+            return data;
+        }
+    });
+    post_request->resume();
 }
 
 LuaNetwork::LuaNetwork(LuaFile* lua)
@@ -41,7 +57,7 @@ LuaNetwork::LuaNetwork(LuaFile* lua)
 std::shared_ptr<LuaHttpClient> LuaNetwork::createHttpClient()
 {
     return std::make_shared<LuaHttpClient>(lua);
-}*/
+}
 
 LuaFile::LuaFile(storage::Path filename, storage::Path manifest)
     :lua_gui(this),
